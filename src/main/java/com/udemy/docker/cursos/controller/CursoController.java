@@ -49,7 +49,8 @@ public class CursoController {
 	public ResponseEntity<Curso> getCursoPorId(@PathVariable Long id) {
 		logger.info("start CursoController getCursoPorId");
 		
-		Optional<Curso> curso = cursoService.getCursoPorId(id);
+		//Optional<Curso> curso = cursoService.getCursoPorId(id);
+		Optional<Curso> curso = cursoService.getCursoPorIdConUsuarios(id);
 		ResponseEntity<Curso> respuesta = null;
 		
 		

@@ -12,6 +12,8 @@ public interface CursoService {
 	
 	public Optional<Curso> getCursoPorId(Long id);
 	
+	public Optional<Curso> getCursoPorIdConUsuarios(Long id);
+	
 	public Curso saveCurso(Curso curso);
 	
 	public void deleteCurso(Long id);
@@ -21,4 +23,5 @@ public interface CursoService {
 	public Optional<Usuario> crearUsuario(Usuario usuario, Long cursoId);
 	
 	public Optional<Usuario> eliminarUsuario(Usuario usuario, Long cursoId);
+	
 }

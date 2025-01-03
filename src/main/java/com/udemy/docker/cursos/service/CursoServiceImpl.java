@@ -3,6 +3,7 @@ package com.udemy.docker.cursos.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -144,5 +145,34 @@ public class CursoServiceImpl implements CursoService {
 		
 		return Optional.empty();
 	}
+
+	@Override
+	@Transactional
+	public Optional<Curso> getCursoPorIdConUsuarios(Long id) {
+		logger.info("start CursoServiceImpl getCursoPorIdConUsuarios");
+		
+		Optional<Curso> cursoOpt = cursoRepository.findById(id);
+		Curso curso = null;
+		List<Long> idsUsuarios = null;
+		List<Usuario> listaUsuarios = null;
+		
+		if(cursoOpt.isPresent()) {
+			curso = cursoOpt.get();
+			
+			if(!curso.getCursoUsuarios().isEmpty()) {
+				idsUsuarios = curso.getCursoUsuarios().stream().map(obj -> obj.getUsuarioId()).collect(Collectors.toList());
+				listaUsuarios = usuarioClientRest.getUsuariosCurso(idsUsuarios);
+				curso.setUsuarios(listaUsuarios);
+				
+				return Optional.of(curso);
+			}
+		}
+		
+		logger.info("end CursoServiceImpl getCursoPorIdConUsuarios");
+		
+		return Optional.empty();
+	}
+	
+	
 
 }
