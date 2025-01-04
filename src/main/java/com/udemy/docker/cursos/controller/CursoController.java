@@ -205,6 +205,19 @@ public class CursoController {
 		return respuesta; 
 	}
 	
+	@DeleteMapping(path = "/deleteUsuarioCurso/{usuarioId}")
+	public ResponseEntity<?> eliminarUsuarioCurso(@PathVariable Long usuarioId) {
+		logger.info("start CursoController eliminarUsuarioCurso");
+		
+		cursoService.deleteUsuarioCursoPorId(usuarioId);
+		
+		ResponseEntity<?> respuesta = new ResponseEntity<>(HttpStatus.OK);
+		
+		logger.info("end CursoController eliminarUsuarioCurso");
+		
+		return respuesta;
+	}
+	
 	private ResponseEntity<Map<String, String>> validar(BindingResult bindingResult) {
 		Map<String, String> mapaErrores = new HashMap<>();
 		bindingResult.getFieldErrors().forEach(error -> {

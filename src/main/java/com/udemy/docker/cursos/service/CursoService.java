@@ -18,6 +18,8 @@ public interface CursoService {
 	
 	public void deleteCurso(Long id);
 	
+	public void deleteUsuarioCursoPorId(Long id);
+	
 	public Optional<Usuario> asignarUsuario(Usuario usuario, Long cursoId);
 	
 	public Optional<Usuario> crearUsuario(Usuario usuario, Long cursoId);

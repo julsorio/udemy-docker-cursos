@@ -66,6 +66,14 @@ public class CursoServiceImpl implements CursoService {
 		logger.info("end CursoServiceImpl deleteCurso");
 		
 	}
+	
+	@Override
+	@Transactional
+	public void deleteUsuarioCursoPorId(Long id) {
+		logger.info("start CursoServiceImpl deleteUsuarioCursoPorId");
+		cursoRepository.eliminarUsuarioCurso(id);
+		logger.info("end CursoServiceImpl deleteUsuarioCursoPorId");
+	}
 
 	@Override
 	@Transactional
@@ -147,7 +155,7 @@ public class CursoServiceImpl implements CursoService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Optional<Curso> getCursoPorIdConUsuarios(Long id) {
 		logger.info("start CursoServiceImpl getCursoPorIdConUsuarios");
 		
@@ -172,7 +180,5 @@ public class CursoServiceImpl implements CursoService {
 		
 		return Optional.empty();
 	}
-	
-	
 
 }
