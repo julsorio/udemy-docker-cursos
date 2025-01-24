@@ -171,9 +171,9 @@ public class CursoServiceImpl implements CursoService {
 				idsUsuarios = curso.getCursoUsuarios().stream().map(obj -> obj.getUsuarioId()).collect(Collectors.toList());
 				listaUsuarios = usuarioClientRest.getUsuariosCurso(idsUsuarios);
 				curso.setUsuarios(listaUsuarios);
-				
-				return Optional.of(curso);
-			}
+			} 
+			
+			return Optional.of(curso);
 		}
 		
 		logger.info("end CursoServiceImpl getCursoPorIdConUsuarios");

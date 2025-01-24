@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.udemy.docker.cursos.model.Usuario;
 
-@FeignClient(name = "usuarios", url = "usuarios:8001/usuarios/api/v1/")
+@FeignClient(name = "usuarios")
 public interface UsuarioClientRest {
 	
 	@GetMapping(path = "/usuario/{id}")
