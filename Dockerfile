@@ -14,8 +14,14 @@ WORKDIR /app
 
 RUN mkdir ./logs
 
-COPY --from=build /app/target/*.jar app.jar
+ARG TARGET_FOLDER=target
+ARG JAR_NAME=cursos-0.0.1-SNAPSHOT.jar
 
-EXPOSE 8001
+COPY --from=build /app/${TARGET_FOLDER}/${JAR_NAME} app.jar
+
+ARG PORT_APP=8002
+ENV PORT=${PORT_APP}
+EXPOSE ${PORT}
+#EXPOSE 8002
 
 ENTRYPOINT ["java","-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}","-jar","app.jar"]
