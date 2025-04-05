@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cursos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cursos
+  template:
+    metadata:
+      labels:
+        app: cursos
+    spec:
+      containers:
+      - image: julsorio/udemy-docker-cursos:v1
+        name: udemy-docker-cursos
+        ports:
+        - containerPort: 8002
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: test

@@ -752,3 +752,225 @@ Events:
   
   
   --insecure-skip-tls-verify
+  
+  
+kubectl expose deployment mysql8 --port=3306 --type=ClusterIP
+ 
+kubectl expose deployment mysql8 --port=3306 --type=ClusterIP
+service/mysql8 exposed
+ 
+ClusterIP -> comunicacion interna
+NodePort -> direccion publica 
+LoadBalancer -> 
+
+litado de servicios
+kubectl get services o get svc
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP    42m
+mysql8       ClusterIP   10.104.208.0   <none>        3306/TCP   57s
+
+kubectl get all
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/mysql8-9fddbd657-w8k2q   1/1     Running   0          14m
+
+NAME                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+service/kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP    45m
+service/mysql8       ClusterIP   10.104.208.0   <none>        3306/TCP   3m25s
+
+NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/mysql8   1/1     1            1           14m
+
+NAME                               DESIRED   CURRENT   READY   AGE
+replicaset.apps/mysql8-9fddbd657   1         1         1       14m
+
+
+kubectl create deployment usuarios --image=julsorio/udemy-docker-usuarios:v1 --port=8001 --dry-run=client -o yaml > deployment-usuarios.yaml
+
+kubectl create deployment cursos --image=julsorio/udemy-docker-cursos:v1 --port=8002 --dry-run=client -o yaml > deployment-cursos.yaml
+
+kubectl expose deployment usuarios --port=8001 --type=LoadBalancer 
+LoadBalancer para comunicacion interna (entre pods) y externa (postman)
+
+ip publica del cluster
+minikube service usuarios --url
+http://127.0.0.1:53455
+
+minikube service cursos --url
+http://127.0.0.1:52877
+
+kubectl create deployment postgres14 --image=postgres:14-alpine --port=5432 --dry-run=client -o yaml > deployment-postgres.yaml
+
+kubectl apply -f .\deployment-postgres.yaml
+deployment.apps/postgres14 created
+
+kubectl get deployments
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+mysql8       1/1     1            1           11h
+postgres14   1/1     1            1           4s
+usuarios     1/1     1            1           10h
+
+kubectl get pods
+NAME                          READY   STATUS    RESTARTS   AGE
+mysql8-9fddbd657-w8k2q        1/1     Running   0          11h
+postgres14-759bd649b4-wj8rf   1/1     Running   0          14s
+usuarios-9b674f45b-hgcqj      1/1     Running   0          10h
+
+kubectl expose deployment postgres14 --port=5432 --type=ClusterIP
+service/postgres14 exposed
+
+ kubectl get services
+NAME         TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+kubernetes   ClusterIP      10.96.0.1        <none>        443/TCP          12h
+mysql8       ClusterIP      10.104.208.0     <none>        3306/TCP         11h
+postgres14   ClusterIP      10.108.48.171    <none>        5432/TCP         4s
+usuarios     LoadBalancer   10.102.236.186   <pending>     8001:32492/TCP   10h
+
+minikube service postgres14 --url
+😿  service default/postgres14 has no node port
+❗  Services [default/postgres14] have type "ClusterIP" not meant to be exposed, however for local development minikube allows you to access this !
+http://127.0.0.1:59018
+
+
+cambiar una imagen en el pod
+antes se realiza un describe del pod para obtener el nombre del contenedor y la imagen
+
+PS C:\Users\Julian> kubectl describe pod cursos-65489c697f-m8mph
+Name:             cursos-65489c697f-m8mph
+Namespace:        default
+Priority:         0
+Service Account:  default
+Node:             minikube/192.168.49.2
+Start Time:       Wed, 29 Jan 2025 06:35:56 +0100
+Labels:           app=cursos
+                  pod-template-hash=65489c697f
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.12
+IPs:
+  IP:           10.244.0.12
+Controlled By:  ReplicaSet/cursos-65489c697f
+Containers:
+  udemy-docker-cursos:
+    Container ID:   docker://727ca94d5e8c772059df14a630149e4d1b797eb93011b15b90b365ec2c19f043
+    Image:          julsorio/udemy-docker-cursos:v1
+
+kubectl set image deployment cursos udemy-docker-cursos=julsorio/udemy-docker-cursos:v2
+
+escalar el numero de instancias
+kubectl scale deployment usuarios --replicas=3
+deployment.apps/usuarios scaled
+
+aparecen 3 pods de usuarios
+kubectl get pods
+NAME                          READY   STATUS    RESTARTS   AGE
+cursos-65489c697f-m8mph       1/1     Running   0          65m
+mysql8-9fddbd657-w8k2q        1/1     Running   0          13h
+postgres14-759bd649b4-wj8rf   1/1     Running   0          82m
+usuarios-9b674f45b-frksz      1/1     Running   0          38s
+usuarios-9b674f45b-hgcqj      1/1     Running   0          11h
+usuarios-9b674f45b-nzh22      1/1     Running   0          38s
+
+
+kubectl get all
+NAME                              READY   STATUS    RESTARTS   AGE
+pod/cursos-65489c697f-m8mph       1/1     Running   0          70m
+pod/mysql8-9fddbd657-w8k2q        1/1     Running   0          13h
+pod/postgres14-759bd649b4-wj8rf   1/1     Running   0          87m
+pod/usuarios-9b674f45b-frksz      1/1     Running   0          5m51s
+pod/usuarios-9b674f45b-hgcqj      1/1     Running   0          11h
+pod/usuarios-9b674f45b-nzh22      1/1     Running   0          5m51s
+
+NAME                 TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+service/cursos       LoadBalancer   10.111.65.157    <pending>     8002:31439/TCP   60m
+service/kubernetes   ClusterIP      10.96.0.1        <none>        443/TCP          13h
+service/mysql8       ClusterIP      10.104.208.0     <none>        3306/TCP         13h
+service/postgres14   ClusterIP      10.108.48.171    <none>        5432/TCP         84m
+service/usuarios     LoadBalancer   10.102.236.186   <pending>     8001:32492/TCP   11h
+
+NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/cursos       1/1     1            1           70m
+deployment.apps/mysql8       1/1     1            1           13h
+deployment.apps/postgres14   1/1     1            1           87m
+deployment.apps/usuarios     3/3     3            3           11h
+
+NAME                                    DESIRED   CURRENT   READY   AGE
+replicaset.apps/cursos-65489c697f       1         1         1       70m
+replicaset.apps/mysql8-9fddbd657        1         1         1       13h
+replicaset.apps/postgres14-759bd649b4   1         1         1       87m
+replicaset.apps/usuarios-9b674f45b      3         3         3       11h
+
+
+ kubectl get service mysql8
+NAME     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+mysql8   ClusterIP   10.104.208.0   <none>        3306/TCP   13h
+
+generar fichero yaml a partir de un servicio
+kubectl get service mysql8 -o yaml > servicio-mysql.yaml
+
+eliminar despliegue usando el fichero yaml
+kubectl get deployments
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+cursos       1/1     1            1           3h4m
+mysql8       1/1     1            1           15h
+postgres14   1/1     1            1           3h21m
+usuarios     3/3     3            3           13h
+
+kubectl get services
+NAME         TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+cursos       LoadBalancer   10.111.65.157    <pending>     8002:31439/TCP   175m
+kubernetes   ClusterIP      10.96.0.1        <none>        443/TCP          15h
+mysql8       ClusterIP      10.104.208.0     <none>        3306/TCP         15h
+postgres14   ClusterIP      10.108.48.171    <none>        5432/TCP         3h19m
+usuarios     LoadBalancer   10.102.236.186   <pending>     8001:32492/TCP   13h
+
+kubectl delete -f .\servicio-usuarios.yaml
+service "usuarios" deleted
+
+ kubectl delete -f .\deployment-usuarios.yaml
+deployment.apps "usuarios" deleted
+
+
+se actualiza el deployment de mysql con la informacion del volume para almacenamiento de datos
+ kubectl apply -f .\deployment-mysql.yaml
+deployment.apps/mysql8 configured
+
+C:\Users\Julian\Documents\udemy>kubectl logs cursos-65489c697f-q98df
+
+
+volumenes
+
+configuracion del volumen fuera del contenedor
+tipo host path -> configurado en un directorio
+
+persistent volume
+no se configura en el fichero deployment
+se configura por separado en un fichero yaml
+
+storage class
+C:\Users\Julian>kubectl get sc
+NAME                 PROVISIONER                RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+standard (default)   k8s.io/minikube-hostpath   Delete          Immediate           false                  65d
+
+persistent volume claim
+se debe configurar en el fichero de deployment
+
+C:\Users\Julian\Documents\udemy>kubectl apply -f mysql-pv.yaml
+persistentvolume/mysql-pv created
+
+el recurso se ha creado en el cluster y no en el pod
+
+C:\Users\Julian\Documents\udemy>kubectl apply -f mysql-pvc.yaml
+persistentvolumeclaim/mysql-pvc created
+
+C:\Users\Julian\Documents\udemy>kubectl get pv
+NAME          CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                  STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+mysql-pv      2Gi        RWO            Retain           Bound    default/mysql-pvc      standard       <unset>                          15m
+postgres-pv   2Gi        RWO            Retain           Bound    default/postgres-pvc   standard       <unset>                          18s
+
+C:\Users\Julian\Documents\udemy>kubectl get pvc
+NAME           STATUS   VOLUME        CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+mysql-pvc      Bound    mysql-pv      2Gi        RWO            standard       <unset>                 14m
+postgres-pvc   Bound    postgres-pv   2Gi        RWO            standard       <unset>                 31s
+
+config map
+fichero especializado de kubernetes para centralizar la configuracion
