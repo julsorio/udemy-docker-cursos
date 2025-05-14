@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cursos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cursos
+  template:
+    metadata:
+      labels:
+        app: cursos
+    spec:
+      containers:
+      - image: julsorio/udemy-docker-cursos:v2
+        name: udemy-docker-cursos
+        ports:
+        - containerPort: 8002
+        env:
+          - name: APP_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: servicio-cursos
+                key: app_port
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: servicio-cursos
+                key: db_host
+          - name: DB_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: servicio-cursos
+                key: db_port
+          - name: DB_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: servicio-cursos
+                key: db_name
+          - name: DB_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: servicio-cursos
+                key: db_username
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: secret-db-cursos
+                key: password
+          - name: URL_SRV_USUARIOS
+            valueFrom:
+              configMapKeyRef:
+                name: servicio-cursos
+                key: url_usuarios
+          - name: SPRING_PROFILES_ACTIVE
+            value: prod
